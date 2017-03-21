@@ -68,31 +68,53 @@ public class Main {
 
 		for (int i = 1; i < max_col; i++) {
 			for (int j = 0; j < max_row; j++) {
-				
 				for (int k = 0; k < max_row; k++) {
 					loc[k] = table.get(k).get(i-1).cost + costs[j][i] + travel[k][j];
 				}
-				
+
 				table.get(j).get(i).cost = loc[0];
+				table.get(j).get(i).parentLocation = 0;
 
 				for (int k = 1; k < loc.length; k++) {
 					if (loc[k] < table.get(j).get(i).cost) {
 						table.get(j).get(i).cost = loc[k];
+						table.get(j).get(i).parentLocation = k;
 					}
 				}
 			}
 		}
 
 		int l = Integer.MAX_VALUE;
+		int fr = 0;
+		Node n = new Node();
 		for (int k = 0; k < max_row; k++) {
 			if (table.get(k).get(max_col-1).cost < l) {
 				l = table.get(k).get(max_col-1).cost;
+				n = table.get(k).get(max_col-1);
+				fr = k;
 			}
 		}
+		String s = numToLoc(fr);
+		for (int k = max_col-1; k > 0; k--) {
+			int p = table.get(fr).get(k).parentLocation;
+			fr = p;
+			s = numToLoc(p) + " " + s;
+		}
 
+		System.out.println(l);
+		System.out.println(s);
 		return l;
 	}
-	
+
+	public String numToLoc(int l) {
+		switch(l) {
+		case 0: return "NY"; 
+		case 1: return "LA"; 
+		case 2: return "DEN";
+		}
+		return "";
+	}
+
 	public static void main(String[] args) {
 		Main m = new Main();
 		int l = Integer.MAX_VALUE;
@@ -101,10 +123,10 @@ public class Main {
 			//System.out.println(temp);
 			if (temp < l) l = temp;
 		}
-		System.out.println(l);
+		//System.out.println(l);
 
-		System.out.println(m.dynPro());
-		
+		m.dynPro();
+
 
 
 
