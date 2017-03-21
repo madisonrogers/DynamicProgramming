@@ -34,8 +34,7 @@ public class Main {
 	int cheapRoute(int r, int c) {
 		Integer[] loc = new Integer[max_row];
 		if (c == 0) {
-			int t = costs[r][c];
-			return t;
+			return costs[r][c];
 		}
 		else {
 			loc[0] = costs[r][c] + cheapRoute(r, c-1);
@@ -51,32 +50,54 @@ public class Main {
 	}
 
 	int dynPro() {
-		Integer[][] table = new Integer[max_row][max_col];
+		ArrayList<ArrayList<Node>> table = new ArrayList<ArrayList<Node>>(3);
 		Integer[] loc = new Integer[max_row];
 
-		//		for (int row = 0; row < max_row+1; row++) {
-		//			table[row][0] = 0;
-		//		}
-		//		
-		//		for (int col = 0; col < max_col+1; col++) {
-		//			table[0][col] = 0;
-		//		}
+		for (int row = 0; row < 3; row++) {
+			table.add(new ArrayList<Node>(12));
+		}
+		for (int i = 0; i < max_row; i++) {
+			for (int j = 0; j < max_col; j++) {
+				table.get(i).add(new Node());
+			}
+		}
 
-		table[0][0] = costs[0][0];
-		table[1][0] = costs[1][0];
-		table[2][0] = costs[2][0];
+		table.get(0).get(0).cost = costs[0][0];
+		table.get(1).get(0).cost = costs[1][0];
+		table.get(2).get(0).cost = costs[2][0];
+
+		table.get(0).get(0).location = 0;
+		table.get(1).get(0).location = 1;
+		table.get(2).get(0).location = 2;
 
 		for (int i = 1; i < max_col; i++) {
 			for (int j = 0; j < max_row; j++) {
-				loc[0] = table[j][i-1] + costs[j][i];
-				loc[1] = table[j][i-1] + costs[(j+1)%3][i] + travel[j][(j+1)%3];
-				loc[2] = table[j][i-1] + costs[(j+2)%3][i] + travel[j][(j+2)%3];
-
-				table[j][i] = loc[0];
+				if (table.get(j).get(i-1).location == 0) {
+					loc[0] = table.get(j).get(i-1).cost + costs[0][i];
+					loc[1] = table.get(j).get(i-1).cost + costs[1][i] + 20;
+					loc[2] = table.get(j).get(i-1).cost + costs[2][i] + 15;
+				}
+				
+				if (table.get(j).get(i-1).location == 1) {
+					loc[0] = table.get(j).get(i-1).cost + costs[0][i] + 20;
+					loc[1] = table.get(j).get(i-1).cost + costs[1][i];
+					loc[2] = table.get(j).get(i-1).cost + costs[2][i] + 10;
+				}
+				
+				if (table.get(j).get(i-1).location == 2) {
+					loc[0] = table.get(j).get(i-1).cost + costs[0][i] + 15;
+					loc[1] = table.get(j).get(i-1).cost + costs[1][i] + 10;
+					loc[2] = table.get(j).get(i-1).cost + costs[2][i];
+				}
+				
+				
+				table.get(j).get(i).cost = loc[0];
+				table.get(j).get(i).location = 0;
 
 				for (int k = 1; k < loc.length; k++) {
-					if (loc[k] < table[j][i]) {
-						table[j][i] = loc[k];
+					if (loc[k] < table.get(j).get(i).cost) {
+						table.get(j).get(i).cost = loc[k];
+						table.get(j).get(i).location = k;
 					}
 				}
 			}
@@ -85,19 +106,49 @@ public class Main {
 		for (int i = 0; i < max_row; i++) {
 			tem = "";
 			for (int j = 0; j < max_col; j++) {
-				tem = tem + table[i][j].toString() + " ";
+				tem = tem + table.get(i).get(j).cost + " ";
 			}
 			System.out.println(tem);
 		}
-		
+
 		int l = Integer.MAX_VALUE;
-		for (int k = 1; k < max_row; k++) {
-			if (table[k][max_col-1] < l) {
-				l = table[k][max_col-1];
+		for (int k = 0; k < max_row; k++) {
+			if (table.get(k).get(max_col-1).cost < l) {
+				l = table.get(k).get(max_col-1).cost;
 			}
 		}
 
 		return l;
+	}
+	
+	int dynPro2() {
+		ArrayList<ArrayList<Node>> table = new ArrayList<ArrayList<Node>>(12);
+		Integer[] loc = new Integer[max_row];
+
+		for (int row = 0; row < 12; row++) {
+			table.add(new ArrayList<Node>(3^row * 3));
+		}
+		for (int i = 0; i < max_row; i++) {
+			for (int j = 0; j < max_col; j++) {
+				table.get(i).add(new Node());
+			}
+		}
+		
+		table.get(0).get(0).cost = costs[0][0];
+		table.get(0).get(1).cost = costs[1][0];
+		table.get(0).get(2).cost = costs[2][0];
+		
+		table.get(0).get(0).location = 0;
+		table.get(0).get(1).location = 1;
+		table.get(0).get(2).location = 2;
+		
+		for (int i = 0; i < 12; i++) {
+			for (int j = 0; j < table.get(i).size(); j++) {
+				
+			}
+		}
+		
+		return 0;
 	}
 
 	public static void main(String[] args) {
@@ -112,6 +163,8 @@ public class Main {
 		//System.out.println(m.routes.get(m.totals.indexOf(l)));
 
 		System.out.println(m.dynPro());
+		
+		System.out.println(m.dynPro2());
 
 
 
