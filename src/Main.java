@@ -101,14 +101,14 @@ public class Main {
 				}
 			}
 		}
-		String tem;
-		for (int i = 0; i < max_row; i++) {
-			tem = "";
-			for (int j = 0; j < max_col; j++) {
-				tem = tem + table.get(i).get(j).cost + " ";
-			}
-			System.out.println(tem);
-		}
+//		String tem;
+//		for (int i = 0; i < max_row; i++) {
+//			tem = "";
+//			for (int j = 0; j < max_col; j++) {
+//				tem = tem + table.get(i).get(j).cost + " ";
+//			}
+//			System.out.println(tem);
+//		}
 
 		int l = Integer.MAX_VALUE;
 		for (int k = 0; k < max_row; k++) {
@@ -204,7 +204,7 @@ public class Main {
 		System.out.println(l);
 		//System.out.println(m.routes.get(m.totals.indexOf(l)));
 
-		//System.out.println(m.dynPro());
+		System.out.println(m.dynPro());
 		
 		System.out.println(m.dynPro2());
 
