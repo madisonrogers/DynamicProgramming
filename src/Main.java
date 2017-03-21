@@ -2,14 +2,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main {
-	
-	
+
+
 	public int[][] costs;
 	public int[][] travel;
 	public String[] cities;
 	private int max_row;
 	private int max_col;
-	
+
 	public ArrayList<String> routes = new ArrayList<String>();
 	public ArrayList<Integer> totals = new ArrayList<Integer>();
 
@@ -30,42 +30,90 @@ public class Main {
 			{15,10,0}
 		};
 	}
-	
-	int cheapRoute(int sum, int r, int c, String s) {
+
+	int cheapRoute(int r, int c) {
 		Integer[] loc = new Integer[max_row];
-		s = s + cities[r] + " ";
-		if (c == max_col - 1) {
-			int t = sum + costs[r][c];
-			totals.add(t);
-			routes.add(s);
+		if (c == 0) {
+			int t = costs[r][c];
 			return t;
 		}
 		else {
-			loc[0] = cheapRoute(sum + costs[r][c], r, c+1, s);
-			loc[1] = cheapRoute(sum + costs[r][c] + travel[r][(r+1)%3], (r+1)%3, c+1, s);
-			loc[2] = cheapRoute(sum + costs[r][c] + travel[r][(r+2)%3], (r+2)%3, c+1, s);
+			loc[0] = costs[r][c] + cheapRoute(r, c-1);
+			loc[1] = costs[r][c] + travel[r][(r+1)%3] + cheapRoute((r+1)%3, c-1);
+			loc[2] = costs[r][c] + travel[r][(r+2)%3] + cheapRoute((r+2)%3, c-1);
 		}
-		
+
 		int min = Integer.MAX_VALUE;
 		for (int x: loc) {
 			if (x < min) min = x;
 		}
 		return min;
 	}
-	
+
 	int dynPro() {
-		return 0;
+		Integer[][] table = new Integer[max_row][max_col];
+		Integer[] loc = new Integer[max_row];
+
+		//		for (int row = 0; row < max_row+1; row++) {
+		//			table[row][0] = 0;
+		//		}
+		//		
+		//		for (int col = 0; col < max_col+1; col++) {
+		//			table[0][col] = 0;
+		//		}
+
+		table[0][0] = costs[0][0];
+		table[1][0] = costs[1][0];
+		table[2][0] = costs[2][0];
+
+		for (int i = 1; i < max_col; i++) {
+			for (int j = 0; j < max_row; j++) {
+				loc[0] = table[j][i-1] + costs[j][i];
+				loc[1] = table[j][i-1] + costs[(j+1)%3][i] + travel[j][(j+1)%3];
+				loc[2] = table[j][i-1] + costs[(j+2)%3][i] + travel[j][(j+2)%3];
+
+				table[j][i] = loc[0];
+
+				for (int k = 1; k < loc.length; k++) {
+					if (loc[k] < table[j][i]) {
+						table[j][i] = loc[k];
+					}
+				}
+			}
+		}
+		String tem;
+		for (int i = 0; i < max_row; i++) {
+			tem = "";
+			for (int j = 0; j < max_col; j++) {
+				tem = tem + table[i][j].toString() + " ";
+			}
+			System.out.println(tem);
+		}
+		
+		int l = Integer.MAX_VALUE;
+		for (int k = 1; k < max_row; k++) {
+			if (table[k][max_col-1] < l) {
+				l = table[k][max_col-1];
+			}
+		}
+
+		return l;
 	}
-	
+
 	public static void main(String[] args) {
 		Main m = new Main();
 		int l = Integer.MAX_VALUE;
 		for (int i = 0; i < m.max_row; i++) {
-			int temp = m.cheapRoute(0, i, 0, "");
+			int temp = m.cheapRoute(i, m.max_col - 1);
+			//System.out.println(temp);
 			if (temp < l) l = temp;
 		}
 		System.out.println(l);
-		System.out.println(m.routes.get(m.totals.indexOf(l)));
-		
+		//System.out.println(m.routes.get(m.totals.indexOf(l)));
+
+		System.out.println(m.dynPro());
+
+
+
 	}
 }
