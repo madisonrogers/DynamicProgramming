@@ -66,49 +66,22 @@ public class Main {
 		table.get(1).get(0).cost = costs[1][0];
 		table.get(2).get(0).cost = costs[2][0];
 
-		table.get(0).get(0).location = 0;
-		table.get(1).get(0).location = 1;
-		table.get(2).get(0).location = 2;
-
 		for (int i = 1; i < max_col; i++) {
 			for (int j = 0; j < max_row; j++) {
-				if (table.get(j).get(i-1).location == 0) {
-					loc[0] = table.get(j).get(i-1).cost + costs[0][i];
-					loc[1] = table.get(j).get(i-1).cost + costs[1][i] + 20;
-					loc[2] = table.get(j).get(i-1).cost + costs[2][i] + 15;
-				}
 				
-				if (table.get(j).get(i-1).location == 1) {
-					loc[0] = table.get(j).get(i-1).cost + costs[0][i] + 20;
-					loc[1] = table.get(j).get(i-1).cost + costs[1][i];
-					loc[2] = table.get(j).get(i-1).cost + costs[2][i] + 10;
-				}
-				
-				if (table.get(j).get(i-1).location == 2) {
-					loc[0] = table.get(j).get(i-1).cost + costs[0][i] + 15;
-					loc[1] = table.get(j).get(i-1).cost + costs[1][i] + 10;
-					loc[2] = table.get(j).get(i-1).cost + costs[2][i];
+				for (int k = 0; k < max_row; k++) {
+					loc[k] = table.get(k).get(i-1).cost + costs[j][i] + travel[k][j];
 				}
 				
 				table.get(j).get(i).cost = loc[0];
-				table.get(j).get(i).location = 0;
 
 				for (int k = 1; k < loc.length; k++) {
 					if (loc[k] < table.get(j).get(i).cost) {
 						table.get(j).get(i).cost = loc[k];
-						table.get(j).get(i).location = k;
 					}
 				}
 			}
 		}
-//		String tem;
-//		for (int i = 0; i < max_row; i++) {
-//			tem = "";
-//			for (int j = 0; j < max_col; j++) {
-//				tem = tem + table.get(i).get(j).cost + " ";
-//			}
-//			System.out.println(tem);
-//		}
 
 		int l = Integer.MAX_VALUE;
 		for (int k = 0; k < max_row; k++) {
@@ -120,79 +93,6 @@ public class Main {
 		return l;
 	}
 	
-	int dynPro2() {
-		ArrayList<ArrayList<Node>> table = new ArrayList<ArrayList<Node>>(max_col);
-		Integer[] loc = new Integer[max_row];
-
-		for (int row = 0; row < max_col; row++) {
-			table.add(new ArrayList<Node>((int) (Math.pow(3, row) * 3)));
-		}
-		for (int i = 0; i < table.size(); i++) {
-			for (int j = 0; j < ((int)Math.pow(3, i) * 3); j++) {
-				table.get(i).add(new Node());
-			}
-		}
-		//System.out.println(table.size());
-		//System.out.println(table.get(11).size());
-		
-		table.get(0).get(0).cost = costs[0][0];
-		table.get(0).get(1).cost = costs[1][0];
-		table.get(0).get(2).cost = costs[2][0];
-		
-		table.get(0).get(0).location = 0;
-		table.get(0).get(1).location = 1;
-		table.get(0).get(2).location = 2;
-		
-		//System.out.println(table.size());
-		//System.out.println(table.get(0).size());
-		
-		for (int i = 1; i < max_col; i++) {
-			for (int j = 0; j < table.get(i).size(); j+=3) {
-				if (table.get(i-1).get(j/3).location == 0) {
-					table.get(i).get(j).cost = table.get(i-1).get(j/3).cost + costs[0][i];
-					table.get(i).get(j).location = 0;
-					
-					table.get(i).get(j+1).cost = table.get(i-1).get(j/3).cost + costs[1][i] + 20;
-					table.get(i).get(j+1).location = 1;
-					
-					table.get(i).get(j+2).cost = table.get(i-1).get(j/3).cost + costs[2][i] + 15;
-					table.get(i).get(j+2).location = 2;
-				}
-				
-				if (table.get(i-1).get(j/3).location == 1) {
-					table.get(i).get(j).cost = table.get(i-1).get(j/3).cost + costs[0][i] + 20;
-					table.get(i).get(j).location = 0;
-					
-					table.get(i).get(j+1).cost = table.get(i-1).get(j/3).cost + costs[1][i];
-					table.get(i).get(j+1).location = 1;
-					
-					table.get(i).get(j+2).cost = table.get(i-1).get(j/3).cost + costs[2][i] + 10;
-					table.get(i).get(j+2).location = 2;
-				}
-				
-				if (table.get(i-1).get(j/3).location == 2) {
-					table.get(i).get(j).cost = table.get(i-1).get(j/3).cost + costs[0][i] + 15;
-					table.get(i).get(j).location = 0; 
-					
-					table.get(i).get(j+1).cost = table.get(i-1).get(j/3).cost + costs[1][i] + 10;
-					table.get(i).get(j+1).location = 1;
-					
-					table.get(i).get(j+2).cost = table.get(i-1).get(j/3).cost + costs[2][i];
-					table.get(i).get(j+2).location = 2;
-				}
-			}
-		}
-		
-		int l = Integer.MAX_VALUE;
-		for (int i = 0; i < table.get(max_col-1).size(); i++) {
-			if (table.get(max_col-1).get(i).cost < l) {
-				l = table.get(max_col-1).get(i).cost;
-			}
-		}
-		
-		return l;
-	}
-
 	public static void main(String[] args) {
 		Main m = new Main();
 		int l = Integer.MAX_VALUE;
@@ -202,11 +102,9 @@ public class Main {
 			if (temp < l) l = temp;
 		}
 		System.out.println(l);
-		//System.out.println(m.routes.get(m.totals.indexOf(l)));
 
 		System.out.println(m.dynPro());
 		
-		System.out.println(m.dynPro2());
 
 
 
